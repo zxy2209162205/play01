@@ -2,10 +2,7 @@ package cn.zxy.jdbc;
 
 import cn.zxy.utils.JdbcUtils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Scanner;
 
 public class JdbcDemo5 {
@@ -22,13 +19,16 @@ public class JdbcDemo5 {
             return false;
         }
         Connection conn = null;
-        Statement stmt = null;
+        PreparedStatement preStmt = null;
         ResultSet rS = null;
         try {
              conn = JdbcUtils.getConnection();
-             String sql = "select * from user where name = '"+name+"' and password ='"+password+"' ";
-             stmt = conn.createStatement();
-             rS = stmt.executeQuery(sql);
+             String sql = "select * from user where name = ? and password = ?";
+             //stmt = conn.createStatement();
+             preStmt = conn.prepareStatement(sql);
+            preStmt.setString(1,name);
+            preStmt.setString(2,password);
+            rS = preStmt.executeQuery();
             //代码写的多垃圾
            /* if (rS.next()){
                 return true;
@@ -39,8 +39,10 @@ public class JdbcDemo5 {
         } catch (SQLException e) {
           e.printStackTrace();
         } finally {
-            JdbcUtils.close(rS,stmt,conn);
+            JdbcUtils.close(rS,preStmt,conn);
         }
         return false;
     }
 }
+
+//a' or 'a' = 'a
