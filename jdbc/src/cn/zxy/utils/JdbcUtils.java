@@ -4,25 +4,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.Objects;
 import java.util.Properties;
 
 public class JdbcUtils {
     private static String url;
     private static String user;
     private static String password;
-    private static String driver;
+    //private static String driver;
 
     static {
-        Properties prop = new Properties();
         try {
+            Properties prop = new Properties();
             ClassLoader classLoader = JdbcUtils.class.getClassLoader();
             URL resource = classLoader.getResource("jdbcUtils.properties");
-            String path = resource.getPath();
+            String path = Objects.requireNonNull(resource).getPath();
             prop.load(new FileReader(path));
             url = prop.getProperty("url");
             user = prop.getProperty("user");
             password = prop.getProperty("password");
-            driver = prop.getProperty("driver");
+            String driver = prop.getProperty("driver");
             Class.forName(driver);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
